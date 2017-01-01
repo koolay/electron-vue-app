@@ -3,9 +3,19 @@ import Vue from 'vue'
 /**
  * Responsible for all HTTP requests.
  */
+/* global alert */
 export default {
   request (method, url, data, successCb = null, errorCb = null) {
-    return Vue.http[method](url, data).then(successCb, errorCb)
+    return Vue.http[method](url, data).then(response => {
+      successCb(response.body)
+    }, error => {
+      if (error) {
+        alert(JSON.stringify(error))
+      }
+      if (errorCb) {
+        errorCb(error)
+      }
+    })
   },
 
   get (url, successCb = null, errorCb = null) {

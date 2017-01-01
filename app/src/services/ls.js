@@ -1,18 +1,15 @@
-const Config = require('electron-config')
-const cfg = new Config()
+import ls from 'local-storage'
 
 export default {
-
-  get(key) {
-    return cfg.get(key)
+  get (key) {
+    return ls(key)
   },
 
-  set(key, value) {
-    return cfg.set(key, value)
+  set (key, val) {
+    return ls(key, val)
   },
 
-  delete(key) {
-    return cfg.delete(key)
+  remove (key) {
+    return ls.remove(key)
   }
-
 }

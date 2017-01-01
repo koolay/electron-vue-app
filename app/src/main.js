@@ -7,27 +7,26 @@ import NProgress from 'nprogress'
 import App from './App'
 import routes from './routes'
 import 'bulma/css/bulma.css'
+import 'nprogress/nprogress.css'
+import config from '../../config'
+import ls from './services/ls'
 
 Vue.config.debug = true
 Vue.use(Electron)
 Vue.use(Resource)
 Vue.use(Router)
 Vue.use(require('vue-resource'))
-// Vue.http.options.root = `${ls.get('apiHost')}/api`
-Vue.http.interceptors.push({
-  request (r) {
-    // let token = ls.get('apiToken')
-    // let token = ls.get('apiToken')
-    // if (token) {
-    // Vue.http.headers.common.Authorization = `Bearer ${token}`
-    // }
-    return r
-  },
+Vue.http.options.root = config.apiHost
 
-  response (r) {
-    NProgress.done()
-    return r
+// [> global alert <]
+Vue.http.interceptors.push((request, next) => {
+  const token = ls.get('token')
+  if (token) {
+    Vue.http.headers.common['Authorization'] = `Bearer ${token}`
   }
+  next((response) => {
+    NProgress.done()
+  })
 })
 
 const router = new Router({

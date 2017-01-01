@@ -7,7 +7,7 @@ const BrowserWindow = electron.BrowserWindow
 
 let mainWindow
 let config = {}
-
+// process.env.= "0"
 if (process.env.NODE_ENV === 'development') {
   config = require('../config')
   config.url = `http://localhost:${config.port}`
@@ -22,7 +22,10 @@ function createWindow () {
    */
   mainWindow = new BrowserWindow({
     height: 600,
-    width: 800
+    width: 1024,
+    'web-preferences': {
+      'web-security': false
+    }
   })
 
   mainWindow.loadURL(config.url)
@@ -30,11 +33,11 @@ function createWindow () {
   if (process.env.NODE_ENV === 'development') {
     BrowserWindow.addDevToolsExtension(path.join(__dirname, '../node_modules/devtron'))
 
-    let installExtension = require('electron-devtools-installer')
+    const installExtension = require('electron-devtools-installer')
 
     installExtension.default(installExtension.VUEJS_DEVTOOLS)
-      .then((name) => mainWindow.webContents.openDevTools())
-      .catch((err) => console.log('An error occurred: ', err))
+        .then((name) => mainWindow.webContents.openDevTools())
+        .catch((err) => console.log('An error occurred: ', err))
   }
 
   mainWindow.on('closed', () => {

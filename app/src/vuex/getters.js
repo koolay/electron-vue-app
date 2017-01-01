@@ -1,1 +1,1 @@
-export const mainCounter = state => state.counters.main
+export const notification = state => state.notification.options

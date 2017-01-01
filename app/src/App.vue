@@ -8,25 +8,14 @@
 
   html,
   body { height: 100%; }
-
-  body {
-    align-items: center;
-    background:
-      radial-gradient(
-        ellipse at center,
-        rgba(255, 255, 255, 1) 0%,
-        rgba(229, 229, 229, .85) 100%
-      );
-    background-position: center;
-    display: flex;
-    font-family: Lato, Helvetica, sans-serif;
-    justify-content: center;
-    text-align: center;
-  }
 </style>
 
 <template>
-  <div>
+  <div style="width: 100%;height: 100%; padding: 20px; margin: 0;">
+    <div v-if="notification.show" v-bind:class="['notification',notifyType]">
+      <button class="delete" @click="hideNotification"></button>
+      {{ notification.message }}
+    </div>
     <router-view></router-view>
   </div>
 </template>
@@ -35,6 +24,36 @@
   import store from 'src/vuex/store'
 
   export default {
-    store
+    store,
+    methods: {
+      hideNotification () {
+        this.$store.dispatch('hideNotification')
+      }
+    },
+    computed: {
+      notification () {
+        return this.$store.getters.notification
+      },
+      notifyType () {
+        let notifyType = 'is-info'
+        switch (this.$store.getters.notification.type) {
+          case 'info':
+            notifyType = 'is-info'
+            break
+          case 'success':
+            notifyType = 'is-success'
+            break
+          case 'error':
+            notifyType = 'is-danger'
+            break
+          case 'warn':
+            notifyType = 'is-warning'
+            break
+          default:
+            notifyType = 'is-info'
+        }
+        return notifyType
+      }
+    }
   }
 </script>

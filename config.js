@@ -2,10 +2,11 @@
 
 const path = require('path')
 
-let config = {
+const config = {
   // Name of electron app
   // Will be used in production builds
   name: 'apigo',
+  apiHost: 'http://localhost:1337',
 
   // Use ESLint (extends `standard`)
   // Further changes can be made in `.eslintrc.js`

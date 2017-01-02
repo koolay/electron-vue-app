@@ -13,6 +13,16 @@ export default {
       } else {
         cb({ result: false, msg: data.msg })
       }
-    })
+    }, cb)
+  },
+
+  isLogined () {
+    const token = ls.get('token') || ''
+    return token !== ''
+  },
+
+  logout () {
+    ls.remove('token')
+    return true
   }
 }

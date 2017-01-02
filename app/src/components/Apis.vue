@@ -41,11 +41,6 @@
             <th></th>
           </tr>
         </thead>
-        <tfoot>
-          <tr>
-            <th colspan="5">Name</th>
-          </tr>
-        </tfoot>
         <tbody>
           <tr v-for="api in apiList">
             <td>{{ api.path }}</td>
@@ -54,12 +49,17 @@
             <td>{{ api.createdBy }}</td>
             <td class="is-icon">
               <router-link :to="{ name: 'apiTest', params: { projectId: projectId, id: api._id } }">
-                <i class="fa fa-instagram"></i>
+                <i class="fa fa-rocket"></i>
               </router-link>
             </td>
           </tr>
         </tbody>
       </table>
+        <nav v-if="pagination.total > 0" class="pagination">
+          <a v-bind:class="{'button': true, 'is-disabled': page.previous.disable}" @click="prePage"><i class="fa fa-angle-left"></i></a>
+          <div>{{ page.page }} / {{ page.totalPages }}</div>
+          <a v-bind:class="{'button': true, 'is-disabled': page.next.disable}" @click="nextPage"><i class="fa fa-angle-right"></i></a>
+        </nav>
     <div>
   </div>
 </template>
@@ -67,6 +67,7 @@
 <script>
 import NProgress from 'nprogress'
 import apiStore from '../stores/api'
+import _ from 'lodash'
 
 export default {
   data () {
@@ -81,20 +82,62 @@ export default {
         { value: 'tag', text: '接口模块' }
       ],
 
-      apiList: []
+      apiList: [],
+      pagination: {
+        page: 1,
+        limit: 3,
+        total: 0
+      }
     }
+  },
+  watch: {
+    '$route': 'fetchData'
   },
   created () {
     this.projectId = this.$route.params.id
     this.fetchData()
   },
+  computed: {
+    page () {
+      const totalPages = _.ceil(this.pagination.total / this.pagination.limit)
+      return {
+        page: this.pagination.page,
+        previous: {
+          to: this.pagination.page <= 1 ? 1 : this.pagination.page - 1,
+          disable: this.pagination.page <= 1
+        },
+        next: {
+          to: this.pagination.page >= totalPages ? totalPages : this.pagination.page + 1,
+          disable: this.pagination.page >= totalPages
+        },
+        totalPages: totalPages
+      }
+    }
+  },
   methods: {
-    fetchData () {
+    prePage () {
+      const to = this.page.previous.to
+      this.fetchData(to)
+      this.pagination.page = to
+    },
+
+    nextPage () {
+      const to = this.page.next.to
+      this.fetchData(to)
+      this.pagination.page = to
+    },
+
+    fetchData (page = 1) {
       NProgress.start()
-      const page = 1
-      const limit = 10
+      const my = this
+      const limit = this.pagination.limit
       apiStore.list(this.$route.params.id, this.selectedSearchType, this.keyword, page, limit, data => {
-        this.apiList = data.data.items
+        if (data.result) {
+          my.apiList = data.data.items
+          my.pagination.total = data.data.total
+        } else {
+          my.$store.dispatch('showNotification', { type: 'error', message: data.msg })
+        }
       })
     }
   }

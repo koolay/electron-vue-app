@@ -9,11 +9,10 @@ export default {
     return Vue.http[method](url, data).then(response => {
       successCb(response.body)
     }, error => {
-      if (error) {
-        alert(JSON.stringify(error))
-      }
       if (errorCb) {
         errorCb(error)
+      } else {
+        alert(JSON.stringify(error))
       }
     })
   },

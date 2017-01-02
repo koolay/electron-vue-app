@@ -6,7 +6,7 @@ export default {
     page = page || 1
     searchType = searchType || 'name'
     keyword = keyword || ''
-    const apiUrl = `api/apis?page=${page}&projectId=${projectId}&searchType=${searchType}&keyword=${keyword}`
+    const apiUrl = `api/apis?page=${page}&projectId=${projectId}&searchType=${searchType}&keyword=${keyword}&limit=${limit}`
     http.get(apiUrl, data => {
       cb(data)
     })
@@ -23,12 +23,22 @@ export default {
     })
   },
 
-  getTestCases (apiId, cb = null) {
+  getTestCases (apiId, keyword = '', cb = null) {
     if (!apiId) {
-      cb([])
+      cb(null)
     }
 
-    const apiUrl = `api/mocks?pathid=${apiId}`
+    const apiUrl = `api/mocks?pathid=${apiId}&q=${keyword}`
+    http.get(apiUrl, data => {
+      cb(data)
+    })
+  },
+
+  getTestCaseDetail (id, cb = null) {
+    if (!id) {
+      return null
+    }
+    const apiUrl = `api/mock?id=${id}`
     http.get(apiUrl, data => {
       cb(data)
     })

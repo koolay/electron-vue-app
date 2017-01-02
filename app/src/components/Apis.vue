@@ -85,7 +85,7 @@ export default {
       apiList: [],
       pagination: {
         page: 1,
-        limit: 3,
+        limit: 10,
         total: 0
       }
     }

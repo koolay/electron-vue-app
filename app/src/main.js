@@ -17,6 +17,9 @@ Vue.use(Resource)
 Vue.use(Router)
 Vue.use(require('vue-resource'))
 Vue.http.options.root = config.apiHost
+// Vue.http.options.credentials = true
+// Vue.http.options.xhr = { withCredentials: true }
+// Vue.http.options.emulateJSON = true
 
 // [> global alert <]
 Vue.http.interceptors.push((request, next) => {

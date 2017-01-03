@@ -47,6 +47,7 @@ export default {
         if (result.result === true) {
           this.$router.replace('/master')
         } else {
+          this.$store.dispatch('showNotification', { message: result.msg, type: 'error' })
         }
       }, error => {
         this.$store.dispatch('showNotification', { message: JSON.stringify(error), type: 'error' })

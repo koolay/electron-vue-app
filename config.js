@@ -6,7 +6,8 @@ const config = {
   // Name of electron app
   // Will be used in production builds
   name: 'apigo',
-  apiHost: 'http://apicloud-test.mypaas.com.cn',
+  // apiHost: 'https://apicloud.mypaas.com.cn',
+  apiHost: 'https://apicloud.mypaas.com.cn',
 
   // Use ESLint (extends `standard`)
   // Further changes can be made in `.eslintrc.js`

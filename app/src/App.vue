@@ -1,4 +1,5 @@
 <style>
+  @import '../node_modules/font-awesome/css/font-awesome.css';
   @import url(https://fonts.googleapis.com/css?family=Lato:300);
 
   * {

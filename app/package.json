@@ -6,6 +6,7 @@
   "dependencies": {
     "bulma": "^0.2.3",
     "electron-config": "^0.2.1",
+    "font-awesome": "^4.7.0",
     "local-storage": "^1.4.2",
     "lodash": "^4.17.4",
     "nprogress": "^0.2.0",

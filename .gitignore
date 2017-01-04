@@ -2,6 +2,10 @@
 app/dist/index.html
 app/dist/build.js
 app/dist/styles.css
+app/yarn-error.log
+app/dist/imgs/
+app/dist/fonts/
+
 builds/*
 node_modules
 npm-debug.log

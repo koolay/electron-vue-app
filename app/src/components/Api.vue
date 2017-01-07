@@ -59,7 +59,7 @@
     <div class="container">
         <p class="control has-addons">
           <span class="select">
-            <select v-model="request.m">
+            <select v-model="request.method">
               <option>GET</option>
               <option>POST</option>
               <option>PUT</option>
@@ -115,21 +115,15 @@
           <li><span class="tag is-info">{{ response.duration }}</span></li>
         </ul>
       </div>
-        <p v-if="responseTab==='body'" class="control">
-          <textarea class="textarea" v-model="response.body" ></textarea>
-        </p>
-        <p v-if="responseTab==='headers'" class="control">
-          <textarea class="textarea" v-model="response.headers" ></textarea>
-        </p>
-        <p v-if="responseTab==='cookies'" class="control">
-          <textarea class="textarea" v-model="response.cookies" ></textarea>
-        </p>
+      <div v-if="responseTab==='body'" class="responseBox block" v-html="responseBody"></div>
+      <div v-if="responseTab==='headers'" class="responseBox block" v-html="responseHeaders"></div>
+      <div v-if="responseTab==='cookies'" class="responseBox block" v-html="responseCookies"></div>
     </div>
-
   </div>
 </template>
 
 <script>
+import 'prismjs/themes/prism.css'
 import NProgress from 'nprogress'
 import apiStore from '../stores/api'
 import projectStore from '../stores/project'
@@ -148,7 +142,7 @@ export default {
       api: null,
       request: {
         host: '',
-        m: 'GET',
+        method: 'GET',
         path: '',
         pathParams: '',
         query: '',
@@ -228,7 +222,7 @@ export default {
             apiUrl = apiUrl.replace('{' + prop + '}', pathParam[prop])
           }
           this.request.path = apiUrl
-          this.request.m = tmp.method.toUpperCase()
+          this.request.method = tmp.method.toUpperCase()
         }
       })
     },
@@ -245,16 +239,41 @@ export default {
         my.$store.dispatch('showNotification', { type: 'error', message: '请设置host和path' })
         return
       }
+
+      // 解析json string
+      function parseJsonInput (name, jsonInput) {
+        if (_.isString(jsonInput) && jsonInput && jsonInput !== '{}') {
+          try {
+            return JSON.parse(jsonInput)
+          } catch (e) {
+            my.$store.dispatch('showNotification', { type: 'error', message: `${name}内容不是有效的json` })
+            return false
+          }
+        } else if (_.isObject(jsonInput)) {
+          return jsonInput
+        }
+        return ''
+      }
+
       const apiUrl = _.trimEnd(this.request.host, '/') + '/' + _.trimStart(this.request.path, '/')
+      const query = parseJsonInput('query', this.request.query)
+      const headers = parseJsonInput('headers', this.request.query)
+      const body = parseJsonInput('body', this.request.query)
+      const cookies = parseJsonInput('cookies', this.request.cookies)
+
+      if (query === false && headers === false && cookies === false && body === false) {
+        return
+      }
+
       var options = {
         url: apiUrl,
+        qs: this.request.query || {},
         jar: false,
         headers: this.request.headers || '',
         method: this.request.method,
         cookies: this.request.cookies,
-        form: this.request.body || ''
+        form: this.request.body.replace(/\n/g, '') || ''
       }
-
       NProgress.start()
       const startTime = new Date()
       request(options, function (error, response, body) {
@@ -271,7 +290,30 @@ export default {
         }
       })
     }
+  },
+
+  computed: {
+
+    responseBody () {
+      return this.response.body
+    },
+
+    responseHeaders () {
+      return this.response.headers
+    },
+
+    responseCookies () {
+      return this.response.cookies
+    }
+
   }
 }
 </script>
 
+<style>
+.responseBox {
+  width: 100%;
+  min-height:100px;
+  background:none;
+}
+</style>
